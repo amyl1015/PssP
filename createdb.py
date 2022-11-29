@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from dotenv import load_dotenv
 import os
 
+
 ### drop the old tables that do not start with production_
 def droppingFunction_limited(dbList, db_source):
     for table in dbList:
@@ -35,15 +36,18 @@ MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
 ########
 
+# cnx = mysql.connector.connect(user="amy", password=MYSQL_PASSWORD, host=MYSQL_HOSTNAME, port=3306, database=MYSQL_DATABASE, ssl_ca="DigiCertGlobalRootCA.crt.pem", ssl_disabled=False)
+ssl_args = {'ssl_ca': "DigiCertGlobalRootCA.crt.pem"}
 connection_string_gcp = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOSTNAME}:3306/{MYSQL_DATABASE}'
-db_gcp = create_engine(connection_string_gcp)
+db_gcp = create_engine(connection_string_gcp, connect_args=ssl_args)
 print(db_gcp)
 
 
 #### note to self, need to ensure server_paremters => require_secure_transport is OFF in Azure 
 
-### show tables from databases
+## show tables from databases
 tableNames_gcp = db_gcp.table_names()
+print(tableNames_gcp)
 
 # reoder tables: production_patient_conditions, production_patient_medications, production_medications, production_patients, production_conditions
 tableNames_gcp = ['production_patient_conditions', 'production_patient_medications', 'production_medications', 'production_patients', 'production_conditions']

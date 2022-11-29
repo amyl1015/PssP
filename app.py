@@ -5,15 +5,21 @@ import os
 
 load_dotenv()
 
-mysql_username = os.getenv("MYSQL_HOSTNAME")
-mysql_password = os.getenv("MYSQL_PASSWORD")
-mysql_host = os.getenv("MYSQL_HOST")
-mysql_database = os.getenv("MYSQL_DATABASE")
+MYSQL_HOSTNAME = os.getenv("MYSQL_HOSTNAME")
+MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
+MYSQL_USER = os.getenv("MYSQL_USER")
+MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
 db = SQLAlchemy()
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqldb://' + str(mysql_username) + ':' + str(mysql_password) + '@' + str(mysql_host) + ':3306/' + str(mysql_database)
+ssl_args = {'ssl_ca': "DigiCertGlobalRootCA.crt.pem"}
+connection_string_gcp = f'mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOSTNAME}:3306/{MYSQL_DATABASE}'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://' + str(MYSQL_USER) + ':' + str(MYSQL_PASSWORD) + '@' + str(MYSQL_HOSTNAME) + ':3306/' + str(MYSQL_DATABASE) + '?ssl_ca=DigiCertGlobalRootCA.crt.pem'
+
+
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'sdf#$#dfjkhdf0SDJH0df9fd98343fdfu34rf'
 
@@ -30,14 +36,20 @@ class Patients(db.Model):
     last_name = db.Column(db.String(255))
     zip_code = db.Column(db.String(255), nullable=True)
     gender = db.Column(db.String(255), nullable=True)
+    dob = db.Column(db.String(255), nullable=True)
+    contact_mobile = db.Column(db.String(255), nullable=True)
+    contact_home = db.Column(db.String(255), nullable=True)
 
     # this first function __init__ is to establish the class for python GUI
-    def __init__(self, mrn, first_name, last_name, zip_code, gender):
+    def __init__(self, mrn, first_name, last_name, zip_code, gender, dob, contact_mobile, contact_home):
         self.mrn = mrn
         self.first_name = first_name
         self.last_name = last_name
         self.zip_code = zip_code
         self.gender = gender
+        self.dob = dob
+        self.contact_mobile = contact_mobile
+        self.contact_home = contact_home
 
     # this second function is for the API endpoints to return JSON 
     def to_json(self):
@@ -47,7 +59,10 @@ class Patients(db.Model):
             'first_name': self.first_name,
             'last_name': self.last_name,
             'zip_code': self.zip_code,
-            'gender': self.gender
+            'gender': self.gender,
+            'dob': self.dob,
+            'contact_mobile': self.contact_mobile,
+            'contact_home': self.contact_home,
         }
 
 class Conditions_patient(db.Model):
@@ -139,7 +154,7 @@ def index():
 
 @app.route('/signin')
 def signin():
-    return render_template('/signin.html')
+    return render_template('signin.html')
 
 
 
@@ -147,7 +162,8 @@ def signin():
 @app.route('/patients', methods=['GET'])
 def get_gui_patients():
     returned_Patients = Patients.query.all() # documentation for .query exists: https://docs.sqlalchemy.org/en/14/orm/query.html
-    return render_template("patient_all.html", patients = returned_Patients)
+
+    return render_template("patients.html", patients = returned_Patients)
 
 # this endpoint is for inserting in a new patient
 @app.route('/insert', methods = ['POST'])
@@ -302,7 +318,7 @@ def delete_patient(mrn):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.0', port=8000)
+    app.run(debug=True, host='127.0.0.1', port=8000)
 # !pip3 install mysql-connector-python
 # !pip3 install mysql-python
 # !pip3 install mysqlclient

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> Patients </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">Patient</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/patients">Patients</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/signin">Sign In</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+    <div>
+
+        <h1> Patient Table With No Bootstrap</h1>
+
+            <table  class="table">
+                
+                <tr>  
+                    <!-- so this part with the TH tags, deals with setting the table names -->
+                    <th> Medical Record Number </th>
+                    <th> First Name (FN) </th>
+                    <th> Last Name (LN) </th>
+                    <th> Sex (SEX) </th>
+                    <th> Zip Codes (ZIP) </th>
+                    <th> DOB (DOB) </th>
+                    <th> Contact Mobile (Mobile) </th>
+                    <th> Contact Home (Home) </th>
+                   
+                </tr>
+           
+                <!-- this next below part is special, where we have the equivalent of a LOOP here -->
+                <!-- where we go through our variable that we have shared via app.py in line 22, listPatients -->
+                <!-- and we are saying for each row in listPatients, which we are defining as 'patient' -->
+                <!-- we could have used i, or x, or any other placeholder/variable instead of patient -->
+                <!-- but typically we like to use a name that makes sense for the type of data that are using -->
+                <tbody>
+                {% for i in patients %}
+                    <tr>
+                        <td> {{ i.mrn }} </td>
+                        <td> {{ i.first_name }} </td>
+                        <td> {{ i.last_name }} </td>
+                        <td> {{ i.gender }} </td>
+                        <td> {{ i.zip_code}}</td>
+                        <td> {{ i.dob}}</td>
+                        <td> {{ i.contact_mobile}}</td>
+                        <td> {{ i.contact_home}}</td>
+                        <td> 
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                               
+                                <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#exampleModal" data-toggle="modal">Edit</button>
+                                <button type="button" class="btn btn-primary">Details</button>
+                                <button type="button" class="btn btn-primary">Delete</button>
+                            </div>
+                  </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+           
+
+    </div>
+    <<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+</body>
+</html>
